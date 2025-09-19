@@ -30,6 +30,7 @@ pipeline {
 
                     # Copy build artifacts to remote server (adjust path as needed)
                     scp -o StrictHostKeyChecking=no -r build/* ubuntu@98.130.11.116:/var/www/html/
+                    '''
 
                 }
             }
