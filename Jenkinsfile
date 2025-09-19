@@ -8,7 +8,7 @@ pipeline {
                     sh '''
                     echo "Connecting to remote server..."
 
-                    ssh -o StrictHostKeyChecking=no ubuntu@<REMOTE_SERVER_IP> "
+                    ssh -o StrictHostKeyChecking=no ubuntu@98.130.11.116 "
                         set -e
 
                         # Create directory if it doesn't exist
