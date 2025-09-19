@@ -10,7 +10,7 @@ pipeline {
 
         stage('Remote Build & Deploy') {
             steps {
-                sshagent(['ubuntu']) {
+                sshagent(['remote-deploy-key']) {
                     sh '''
                     ssh -o StrictHostKeyChecking=no ubuntu@98.130.11.116 '
                         mkdir -p ~/learn-jenkins
