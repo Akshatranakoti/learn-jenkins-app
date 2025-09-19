@@ -2,36 +2,40 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
+        stage('Remote Build & Deploy') {
             steps {
-                sh '''
-                echo "📦 Installing dependencies and building project..."
-                ls -la
-                node --version
-                npm --version
-                npm ci
-                npm run build
-                ls -la
-                '''
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sshagent(['remote-deploy-key']) {
+                sshagent (credentials: ['remote-deploy-key']) {
                     sh '''
-                    echo "🚀 Deploying build to remote server..."
+                    echo "Connecting to remote server..."
 
-                    # Copy build artifacts to remote server (adjust path as needed)
-                    scp -o StrictHostKeyChecking=no -r build/* ubuntu@98.130.11.116:/var/www/html/
+                    ssh -o StrictHostKeyChecking=no ubuntu@<REMOTE_SERVER_IP> "
+                        set -e
+
+                        # Create directory if it doesn't exist
+                        mkdir -p ~/learn-jenkins
+
+                        cd ~/learn-jenkins
+
+                        # Clone repo if not already present, else pull latest
+                        if [ ! -d learn-jenkins-app ]; then
+                            git clone https://github.com/Akshatranakoti/learn-jenkins-app.git
+                        else
+                            cd learn-jenkins-app
+                            git pull origin main
+                            cd ..
+                        fi
+
+                        cd learn-jenkins-app
+
+                        # Check Node & NPM versions
+                        node --version
+                        npm --version
+
+                        # Install dependencies and build
+                        npm ci
+                        npm run build
+                    "
                     '''
-
                 }
             }
         }
