@@ -74,7 +74,7 @@ pipeline {
                                 keepAll: false,
                                 reportDir: 'playwright-report',
                                 reportFiles: 'index.html',
-                                reportName: 'Playwright HTML Report',
+                                reportName: 'Playwright Local',
                                 reportTitles: '',
                                 useWrapperFileDirectly: true
                             ])
@@ -101,5 +101,36 @@ pipeline {
                 '''
             }
         }
+        stage('Prod E2E') {
+             environment{
+                        CI_ENVIRONMENT_URL='https://unrivaled-maamoul-921fa9.netlify.app'
+                       }
+                agent {
+                    docker {
+                        image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                        reuseNode true
+                    }
+                }
+                steps {
+                   sh '''
+                    npx playwright test --reporter=html
+                    '''
+                }
+                post {
+                    always {
+                        publishHTML([
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: false,
+                            icon: '',
+                            keepAll: false,
+                            reportDir: 'playwright-report',
+                            reportFiles: 'index.html',
+                            reportName: 'Playwright E2E',
+                            reportTitles: '',
+                            useWrapperFileDirectly: true
+                        ])
+                    }
+                }
+            }
     }
 }
