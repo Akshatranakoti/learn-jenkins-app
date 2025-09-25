@@ -86,7 +86,7 @@ pipeline {
        
         stage('Deploy Staging') {
              environment{
-                        CI_ENVIRONMENT_URL= 'Site url to be set'
+                        CI_ENVIRONMENT_URL= ''
                        }
                 agent {
                     docker {
