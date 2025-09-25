@@ -147,25 +147,8 @@ pipeline {
             
          }
         }
+  
         stage('Deploy Prod') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                echo "chages made"
-                npm install netlify-cli@20.1.1
-                node_modules/.bin/netlify --version
-                echo "Deploying to production .SITE ID : $NETLIFY_SITE_ID"
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --prod
-                '''
-            }
-        }
-        stage('Prod E2E') {
              environment{
                         CI_ENVIRONMENT_URL='https://unrivaled-maamoul-921fa9.netlify.app'
                        }
@@ -177,7 +160,13 @@ pipeline {
                 }
                 steps {
                    sh '''
-                    npx playwright test --reporter=html
+                        echo "chages made"
+                        npm install netlify-cli@20.1.1
+                        node_modules/.bin/netlify --version
+                        echo "Deploying to production .SITE ID : $NETLIFY_SITE_ID"
+                        node_modules/.bin/netlify status
+                        node_modules/.bin/netlify deploy --dir=build --prod
+                        npx playwright test --reporter=html
                     '''
                 }
                 post {
