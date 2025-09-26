@@ -98,17 +98,16 @@ pipeline {
                        }
                 agent {
                     docker {
-                        image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                        image 'my-playwright'
                         reuseNode true
                     }
                 }
                 steps {
                    sh '''
-                    npm install netlify-cli@20.1.1 node-jq
-                    node_modules/.bin/netlify --version
+                    netlify --version
                     echo "Deploying to production .SITE ID : $NETLIFY_SITE_ID"
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
+                    netlify status
+                    netlify deploy --dir=build --json > deploy-output.json
                     CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
                     npx playwright test --reporter=html
                     '''
@@ -145,18 +144,16 @@ pipeline {
                        }
                 agent {
                     docker {
-                        image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                        image 'my-playwright'
                         reuseNode true
                     }
                 }
                 steps {
                    sh '''
-                        echo "chages made"
-                        npm install netlify-cli@20.1.1
-                        node_modules/.bin/netlify --version
+                        netlify --version
                         echo "Deploying to production .SITE ID : $NETLIFY_SITE_ID"
-                        node_modules/.bin/netlify status
-                        node_modules/.bin/netlify deploy --dir=build --prod
+                        netlify status
+                        netlify deploy --dir=build --prod
                         npx playwright test --reporter=html
                     '''
                 }
